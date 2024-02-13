@@ -1,0 +1,68 @@
+﻿<Window x:Class="ImageSorter.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ImageSorter"
+        xmlns:gif="http://wpfanimatedgif.codeplex.com"
+        mc:Ignorable="d"
+        Title="Image Sorter" Height="800" Width="1280" Loaded="Window_Loaded">
+    <Window.Resources>
+        <RoutedUICommand x:Key="deleteCommand"></RoutedUICommand>
+        <RoutedUICommand x:Key="moveCommand"></RoutedUICommand>
+    </Window.Resources>
+    <Window.CommandBindings>
+        <CommandBinding Command="{StaticResource deleteCommand}" Executed="Delete_Click"></CommandBinding>
+        <CommandBinding Command="{StaticResource moveCommand}" Executed="Move_Click"></CommandBinding>
+    </Window.CommandBindings>
+    <Window.InputBindings>
+        <KeyBinding Key="Delete" Command="{StaticResource deleteCommand}"></KeyBinding>
+        <KeyBinding Key="Enter" Command="{StaticResource moveCommand}"></KeyBinding>
+    </Window.InputBindings>
+    <Grid Background="#22282a" x:Name="MainGrid">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="4"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="20"/>
+        </Grid.RowDefinitions>
+        <Image Grid.Column="0" Grid.Row="0" Source="Images/volume.png" Width="20" Height="20" HorizontalAlignment="Left" Margin="10,0,0,0"/>
+        <Slider x:Name="VolumeSlider" ValueChanged="Slider_ValueChanged" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="40,0,0,0" Width="150" Minimum="0" Maximum="1" Value="0.5"/>
+        <TextBlock Grid.Column="2" Grid.Row="0" x:Name="StatusText" Text="Selected Folder: None" HorizontalAlignment="Left" Foreground="#FFFFFF" Margin="20,0,0,0" VerticalAlignment="Center"/>
+        <Button Command="{StaticResource deleteCommand}" Grid.Column="2" Grid.Row="0" Content="Delete (Del)" Height="40" Width="200" HorizontalAlignment="Right" Margin="0,0,10,0" Foreground="#FFFFFF"/>
+        <Button Command="{StaticResource moveCommand}" Grid.Column="2" Grid.Row="0" Content="Move (Enter)" Height="40" Width="200" HorizontalAlignment="Right" Margin="0,0,220,0" Foreground="#FFFFFF"/>
+        <Button Click="Explorer_Click" Grid.Column="2" Grid.Row="0" Content="Show in Explorer" Height="40" Width="120" HorizontalAlignment="Right" Margin="0,0,440,0" Foreground="#FFFFFF"/>
+        <TreeView Grid.Column="0" Grid.Row="1" x:Name="foldersItem" SelectedItemChanged="FoldersItem_SelectedItemChanged" Width="Auto" Background="#22282a" BorderBrush="#22282a" Foreground="#22282a">
+            <TreeView.Resources>
+                <Style TargetType="{x:Type TreeViewItem}">
+                    <Setter Property="HeaderTemplate">
+                        <Setter.Value>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Name="img"  Width="20" Height="20" Stretch="Fill" 
+                                       Source="{Binding 
+                                       RelativeSource={RelativeSource 
+                                       Mode=FindAncestor, 
+                                       AncestorType={x:Type TreeViewItem}}, 
+                                       Path=Header, 
+                                       Converter={x:Static local:HeaderToImageConverter.Instance}}"       
+                                       />
+                                    <TextBlock Text="{Binding}" Margin="5,0" Foreground="#FFFFFF"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </TreeView.Resources>
+        </TreeView>
+        <GridSplitter Grid.Column="1" Grid.Row="0" Width="4" HorizontalAlignment="Stretch" Background="#4d4d4d"/>
+        <GridSplitter Grid.Column="1" Grid.Row="1" Width="4" HorizontalAlignment="Stretch" Background="#4d4d4d"/>
+        <GridSplitter Grid.Column="1" Grid.Row="2" Width="4" HorizontalAlignment="Stretch" Background="#4d4d4d"/>
+        <Image Grid.Column="2" Grid.Row="1" x:Name="imageElement" Width="Auto" gif:ImageBehavior.RepeatBehavior="Forever"/>
+        <TextBlock x:Name="FileNameField" Grid.Column="2" Grid.Row="2" HorizontalAlignment="Right" Foreground="#FFFFFF" Margin="0,0,10,0"/>
+    </Grid>
+</Window>
