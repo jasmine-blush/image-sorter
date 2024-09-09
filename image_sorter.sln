@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32616.157
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageSorter", "ImageSorter\ImageSorter.csproj", "{9E59F8F6-F861-4F99-9B7D-B6138927BA73}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "image_sorter", "image_sorter\image_sorter.csproj", "{9E59F8F6-F861-4F99-9B7D-B6138927BA73}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

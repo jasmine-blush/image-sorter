@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -6,13 +7,14 @@ using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using Ookii.Dialogs.Wpf;
 using WpfAnimatedGif;
-using System.Diagnostics;
 
-namespace ImageSorter {
+namespace image_sorter
+{
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window {
+    public partial class MainWindow : Window
+    {
         public string SelectedImagePath { get; set; }
 
         private readonly object _dummyNode = null;
@@ -23,7 +25,8 @@ namespace ImageSorter {
         private string _currentFile;
         private Random _rng;
 
-        public MainWindow() {
+        public MainWindow()
+        {
             InitializeComponent();
 
             _rng = new Random();
@@ -41,7 +44,8 @@ namespace ImageSorter {
             dialog.Multiselect = false;
             dialog.UseDescriptionForTitle = true;
             dialog.ShowDialog(this);
-            while(dialog.SelectedPath == "") {
+            while(dialog.SelectedPath == "")
+            {
                 Application.Current.Shutdown();
                 return;
             }
@@ -51,7 +55,8 @@ namespace ImageSorter {
             dialog.SelectedPath = "";
             dialog.Description = "Please select the source root-directory:";
             dialog.ShowDialog(this);
-            while(dialog.SelectedPath == "") {
+            while(dialog.SelectedPath == "")
+            {
                 Application.Current.Shutdown();
                 return;
             }
@@ -72,7 +77,8 @@ namespace ImageSorter {
         /// <summary>
         /// Resets the currently showed file view and loads and shows the next _currentFile. Supports images, gif and mp4 files.
         /// </summary>
-        private void ShowCurrentFile() {
+        private void ShowCurrentFile()
+        {
             _videoElement.Stop();
             _videoElement.Close();
             _videoElement.Source = null;
@@ -84,19 +90,24 @@ namespace ImageSorter {
             FileNameField.Text = _currentFile;
 
             string extension = _currentFile.Split('.')[1];
-            if(extension == "mp4") {
+            if(extension == "mp4")
+            {
                 MainGrid.Children.Add(_videoElement);
                 _videoElement.Source = new Uri(_currentFile);
                 _videoElement.Volume = VolumeSlider.Value;
                 _videoElement.Play();
-            } else if(extension == "gif"){
+            }
+            else if(extension == "gif")
+            {
                 var image = new BitmapImage();
                 image.BeginInit();
                 image.CacheOption = BitmapCacheOption.OnLoad;
                 image.UriSource = new Uri(_currentFile);
                 image.EndInit();
                 ImageBehavior.SetAnimatedSource(imageElement, image);
-            } else {
+            }
+            else
+            {
                 var image = new BitmapImage();
                 image.BeginInit();
                 image.CacheOption = BitmapCacheOption.OnLoad;
@@ -110,15 +121,18 @@ namespace ImageSorter {
         /// Helper method for file deletion
         /// </summary>
         /// <param name="filePath">Path of the file to be deleted.</param>
-        public void DeleteFile(string filePath) {
+        public void DeleteFile(string filePath)
+        {
             File.Delete(filePath);
         }
 
         /// <summary>
         /// Adds directory tree to Treeview upon window load
         /// </summary>
-        private void Window_Loaded(object sender, RoutedEventArgs e) {
-            foreach(string s in Directory.GetDirectories(_sortDirectory)) {
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            foreach(string s in Directory.GetDirectories(_sortDirectory))
+            {
                 TreeViewItem item = new TreeViewItem();
                 item.Header = s.Substring(s.LastIndexOf("\\") + 1);
                 item.Tag = s;
@@ -132,7 +146,8 @@ namespace ImageSorter {
         /// <summary>
         /// Repeats video when video ends
         /// </summary>
-        private void VideoElement_MediaEnded(object sender, RoutedEventArgs e) {
+        private void VideoElement_MediaEnded(object sender, RoutedEventArgs e)
+        {
             _videoElement.Source = new Uri(_currentFile);
             _videoElement.Volume = VolumeSlider.Value;
             _videoElement.Play();
@@ -141,12 +156,16 @@ namespace ImageSorter {
         /// <summary>
         /// Adds subfolders to the directory tree when a folder is expanded
         /// </summary>
-        void Folder_Expanded(object sender, RoutedEventArgs e) {
+        void Folder_Expanded(object sender, RoutedEventArgs e)
+        {
             TreeViewItem item = (TreeViewItem)sender;
-            if(item.Items.Count == 1 && item.Items[0] == _dummyNode) {
+            if(item.Items.Count == 1 && item.Items[0] == _dummyNode)
+            {
                 item.Items.Clear();
-                try {
-                    foreach(string s in Directory.GetDirectories(item.Tag.ToString())) {
+                try
+                {
+                    foreach(string s in Directory.GetDirectories(item.Tag.ToString()))
+                    {
                         TreeViewItem subitem = new TreeViewItem();
                         subitem.Header = s.Substring(s.LastIndexOf("\\") + 1);
                         subitem.Tag = s;
@@ -155,14 +174,16 @@ namespace ImageSorter {
                         subitem.Expanded += new RoutedEventHandler(Folder_Expanded);
                         item.Items.Add(subitem);
                     }
-                } catch(Exception) { }
+                }
+                catch(Exception) { }
             }
         }
 
         /// <summary>
         /// Gets the currently selected directory from directory tree when new item is selected
         /// </summary>
-        private void FoldersItem_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e) {
+        private void FoldersItem_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
             TreeView tree = (TreeView)sender;
             TreeViewItem temp = ((TreeViewItem)tree.SelectedItem);
 
@@ -171,13 +192,16 @@ namespace ImageSorter {
             SelectedImagePath = "";
             string temp1 = "";
             string temp2 = "";
-            while(true) {
+            while(true)
+            {
                 temp1 = temp.Header.ToString();
-                if(temp1.Contains(@"\")) {
+                if(temp1.Contains(@"\"))
+                {
                     temp2 = "";
                 }
                 SelectedImagePath = temp1 + temp2 + SelectedImagePath;
-                if(temp.Parent.GetType().Equals(typeof(TreeView))) {
+                if(temp.Parent.GetType().Equals(typeof(TreeView)))
+                {
                     break;
                 }
                 temp = ((TreeViewItem)temp.Parent);
@@ -192,8 +216,10 @@ namespace ImageSorter {
         /// <summary>
         /// Deletes the _currentFile and sets the next one when the delete button is clicked
         /// </summary>
-        private void Delete_Click(object sender, ExecutedRoutedEventArgs e) {
-            try {
+        private void Delete_Click(object sender, ExecutedRoutedEventArgs e)
+        {
+            try
+            {
                 var scope = FocusManager.GetFocusScope((DependencyObject)sender);
                 FocusManager.SetFocusedElement(scope, null);
                 Keyboard.ClearFocus(); // remove keyboard focus
@@ -206,7 +232,9 @@ namespace ImageSorter {
                 Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(lastFile,
                     Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
                     Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
-            }catch(Exception ex) {
+            }
+            catch(Exception ex)
+            {
                 MessageBox.Show(ex.Message + "\n" + _currentFile);
                 throw ex;
             }
@@ -215,34 +243,44 @@ namespace ImageSorter {
         /// <summary>
         /// Moves the _currentFile to the selected destination directory and sets a new _currentFile
         /// </summary>
-        private void Move_Click(object sender, ExecutedRoutedEventArgs e) {
-            try {
+        private void Move_Click(object sender, ExecutedRoutedEventArgs e)
+        {
+            try
+            {
                 var scope = FocusManager.GetFocusScope((DependencyObject)sender);
                 FocusManager.SetFocusedElement(scope, null);
                 Keyboard.ClearFocus(); // remove keyboard focus
                 Keyboard.Focus(this);
 
-                if(_selectedPath != "") {
+                if(_selectedPath != "")
+                {
                     string lastFile = _currentFile;
                     _currentFile = Directory.GetFiles(_imageDirectory, "*", SearchOption.AllDirectories)[1];
                     ShowCurrentFile();
 
                     string[] split = lastFile.Split('\\');
                     string filename = split[split.Length-1];
-                    if(!File.Exists(_selectedPath + "\\" + filename)) {
+                    if(!File.Exists(_selectedPath + "\\" + filename))
+                    {
                         File.Move(lastFile, _selectedPath + "\\" + filename);
-                    } else {
+                    }
+                    else
+                    {
                         string[] namesplit = filename.Split('.');
                         string rawname = namesplit[0] + _rng.Next(10000, 100000).ToString();
                         string extension = namesplit[1];
                         string new_name = _selectedPath + "\\" + rawname + "." + extension;
                         File.Move(lastFile, new_name);
                     }
-                } else {
+                }
+                else
+                {
                     MessageBox.Show(this, "Please select a folder in the left column. This is where the current file will be moved to.",
                         "No destination selected", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
-            } catch(Exception ex) {
+            }
+            catch(Exception ex)
+            {
                 MessageBox.Show(ex.Message + "\n" + _currentFile);
                 throw ex;
             }
@@ -251,7 +289,8 @@ namespace ImageSorter {
         /// <summary>
         /// Opens the current file in explorer
         /// </summary>
-        private void Explorer_Click(object sender, RoutedEventArgs e) {
+        private void Explorer_Click(object sender, RoutedEventArgs e)
+        {
             var scope = FocusManager.GetFocusScope((DependencyObject)sender);
             FocusManager.SetFocusedElement(scope, null);
             Keyboard.ClearFocus(); // remove keyboard focus
@@ -262,7 +301,8 @@ namespace ImageSorter {
         /// <summary>
         /// Sets the video player volume to current slider value
         /// </summary>
-        private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) {
+        private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
             _videoElement.Volume = VolumeSlider.Value;
         }
     }

@@ -5,7 +5,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
 
-namespace ImageSorter
+namespace image_sorter
 {
     #region HeaderToImageConverter
 
